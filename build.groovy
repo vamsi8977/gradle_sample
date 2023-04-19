@@ -29,7 +29,7 @@ stage('SonarQube') {
   }//end stages
 post {
       success {
-          archiveArtifacts artifacts: "gradle/build/libs/*.jar"
+          archiveArtifacts artifacts: "build/libs/*.jar"
       }
       failure {
           echo "The build failed."
