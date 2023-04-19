@@ -17,8 +17,8 @@ java {
 
 sonar {
   properties {
-    property "sonar.projectKey", "test"
-    property "sonar.projectName", "test"
+    property "sonar.projectKey", "gradle"
+    property "sonar.projectName", "gradle_sample"
   }
 }
 
