@@ -1,29 +1,30 @@
 pipeline {
-agent any
-options {
+  agent any
+  options {
     buildDiscarder(logRotator(numToKeepStr:'2' , artifactNumToKeepStr: '2'))
     timestamps()
     ansiColor('xterm')
     }
   stages {
-    stage('CheckOut') {
+    stage('SCM') {
       steps {
+        cleanWs()
         echo 'Checking out project from Bitbucket....'
-          git branch: 'main', url: 'https://github.com/vamsi8977/gradle_sample.git'
+        git branch: 'main', url: 'https://github.com/vamsi8977/gradle_sample.git'
       }
     }
-    stage('build') {
+    stage('Build') {
       steps {
         ansiColor('xterm') {
           echo 'Gradle Build....'
-           sh "./gradlew clean build"
+          sh "./gradlew clean build"
         }
       }
     }
     stage('SonarQube') {
     steps {
         withSonarQubeEnv('SonarQube') {
-            sh "./gradlew sonar"
+          sh "./gradlew sonar"
         }
       }
     }
@@ -32,20 +33,20 @@ options {
         ansiColor('xterm') {
           sh '''
             jf rt u build/libs/*.jar gradle/
-            jf scan build/libs/*.jar
+            jf scan build/libs/*.jar --fail-no-op --build-name=gradle --build-number=$BUILD_NUMBER
           '''
         }
       }
     }
-  }//end stages
-post {
+  }
+  post {
     success {
       archiveArtifacts artifacts: "build/libs/*.jar"
     }
     failure {
       echo "The build failed."
     }
-    cleanup{
+    cleanup {
       deleteDir()
     }
   }
