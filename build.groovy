@@ -3,6 +3,7 @@ agent any
 options {
     buildDiscarder(logRotator(numToKeepStr:'2' , artifactNumToKeepStr: '2'))
     timestamps()
+    ansiColor('xterm')
     }
   stages {
     stage('CheckOut') {
@@ -11,7 +12,7 @@ options {
           git branch: 'main', url: 'https://github.com/vamsi8977/gradle_sample.git'
       }
     }
-stage('build') {
+    stage('build') {
       steps {
         ansiColor('xterm') {
           echo 'Gradle Build....'
@@ -19,23 +20,33 @@ stage('build') {
         }
       }
     }
-stage('SonarQube') {
+    stage('SonarQube') {
     steps {
         withSonarQubeEnv('SonarQube') {
             sh "./gradlew sonar"
         }
+      }
     }
-}
+    stage('JFrog') {
+      steps {
+        ansiColor('xterm') {
+          sh '''
+            jf rt u build/libs/*.jar gradle/*.jar
+            jf scan build/libs/*.jar
+          '''
+        }
+      }
+    }
   }//end stages
 post {
-      success {
-          archiveArtifacts artifacts: "build/libs/*.jar"
-      }
-      failure {
-          echo "The build failed."
-      }
-      cleanup{
-        deleteDir()
-      }
+    success {
+      archiveArtifacts artifacts: "build/libs/*.jar"
     }
+    failure {
+      echo "The build failed."
+    }
+    cleanup{
+      deleteDir()
+    }
+  }
 }
