@@ -31,7 +31,7 @@ options {
       steps {
         ansiColor('xterm') {
           sh '''
-            jf rt u build/libs/*.jar gradle/*.jar
+            jf rt u build/libs/*.jar gradle/
             jf scan build/libs/*.jar
           '''
         }
