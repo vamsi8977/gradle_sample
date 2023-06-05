@@ -1,47 +1,37 @@
+#!/usr/bin/env groovy
+@Library('shared-library') _
+
 pipeline {
   agent any
   options {
     buildDiscarder(logRotator(numToKeepStr:'2' , artifactNumToKeepStr: '2'))
     timestamps()
-    ansiColor('xterm')
     }
   stages {
-    stage('SCM') {
+    stage('CheckOut') {
       steps {
-        cleanWs()
         echo 'Checking out project from Bitbucket....'
-        git branch: 'main', url: 'https://github.com/vamsi8977/gradle_sample.git'
+        cleanWs()
+        checkout([
+          $class: 'GitSCM',
+          branches: [[name: 'main']],
+          userRemoteConfigs: [[url: 'git@github.com:vamsi8977/gradle_sample.git']]
+        ])
       }
     }
     stage('Build') {
       steps {
-        ansiColor('xterm') {
-          echo 'Gradle Build....'
-          sh "./gradlew clean build"
-        }
-      }
-    }
-    stage('SonarQube') {
-    steps {
-        withSonarQubeEnv('SonarQube') {
-          sh "./gradlew sonar"
-        }
-      }
-    }
-    stage('JFrog') {
-      steps {
-        ansiColor('xterm') {
-          sh '''
-            jf rt u build/libs/*.jar gradle/
-            jf scan build/libs/*.jar --fail-no-op --build-name=gradle --build-number=$BUILD_NUMBER
-          '''
+        script {
+          withSonarQubeEnv('SonarQube') {
+            gradle()
+          }
         }
       }
     }
   }
   post {
     success {
-      archiveArtifacts artifacts: "build/libs/*.jar"
+      echo "The build passed."
     }
     failure {
       echo "The build failed."
