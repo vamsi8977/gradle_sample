@@ -1,35 +1,20 @@
-# Hello World: Java project template
+# gradle-simple
 
-This project can be used as a template to start building your own Temporal Workflow application.
+[![](https://jitpack.io/v/jitpack/gradle-simple.svg?label=Release)](https://jitpack.io/#jitpack/gradle-simple) [![](https://jitci.com/gh/jitpack/gradle-simple/svg)](https://jitci.com/gh/jitpack/gradle-simple)
 
-Follow the [Build a "Hello World!" app from scratch tutorial](https://docs.temporal.io/docs/java/hello-world-tutorial) to learn more.
+Example Gradle project producing a single jar. Uses the `maven` plugin to publish the jar to the local repository.
 
-This project uses [Snipsync](https://github.com/temporalio/snipsync) comment wrappers to automatically keep code snippets up to date within our documentation.
+[https://jitpack.io/#jitpack/gradle-simple](https://jitpack.io/#jitpack/gradle-simple)
 
-## How to use the template
+To install the library add: 
+ 
+   ```gradle
+   repositories { 
+        jcenter()
+        maven { url "https://jitpack.io" }
+   }
+   dependencies {
+         implementation 'com.github.jitpack:gradle-simple:1.1'
+   }
+   ```  
 
-To use the template, either download it as a zip file or click "Use Template" to make a copy of it in your own Github account.
-
-## Build the project
-
-Either open the project in IntelliJ, which will automatically build it, or in the project's root directory run:
-
-```
-./gradlew build
-```
-
-## Run the Workflow
-
-First, make sure the [Temporal server](https://docs.temporal.io/docs/server/quick-install) is running.
-
-To start the Workflow, either run the InitiateHelloWorld class from IntelliJ or from the project root run:
-
-```
-./gradlew sayHello
-```
-
-To start the Worker, either run the HelloWorldWorker class from IntelliJ or from the project root run:
-
-```
-./gradlew startWorker
-```

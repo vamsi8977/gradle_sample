@@ -1,62 +1,34 @@
+apply plugin: 'java'
+apply plugin: 'maven-publish'
 
-plugins {
-    // Apply the java plugin to add support for Java
-    id 'java'
+group = 'com.github.jitpack'
+version = '2.0'
 
-    // Apply the application plugin to add support for building a CLI application.
-    id 'application'
+sourceCompatibility = 1.8 // java 8
+targetCompatibility = 1.8
 
-    // Apply the sonar plugin to test a CLI application.
-    id "org.sonarqube" version "4.0.0.2929"
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'com.google.guava:guava:29.0-jre'
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+	withSourcesJar()
+	withJavadocJar()
 }
 
-sonar {
-  properties {
-    property "sonar.projectKey", "gradle"
-    property "sonar.projectName", "gradle_sample"
-  }
-}
-
-repositories {
-    maven {
-        url "https://plugins.gradle.org/m2/"
+publishing {
+    publications {
+        maven(MavenPublication) {
+		from components.java
+        }
     }
-    maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots/"
-    }
-    mavenCentral()
 }
 
-// @@@SNIPSTART hello-world-project-template-java-gradle-dependencies
-dependencies {
-    implementation group: 'io.temporal', name: 'temporal-sdk', version: '1.11.0'
-    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.11'
-    implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.10'
-
-    testImplementation group: 'io.temporal', name: 'temporal-testing', version: '1.11.0'
-    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.5.1'
+wrapper {
+    gradleVersion = "7.3.3"
+    distributionType = Wrapper.DistributionType.ALL
 }
-// @@@SNIPEND
-
-application {
-    // Define the main class for the application.
-    mainClassName = 'helloworldapp.InitiateHelloWorld'
-}
-
-// @@@SNIPSTART hello-world-project-template-java-gradle-tasks
-task sayHello(type: JavaExec) {
-    main = 'helloworldapp.InitiateHelloWorld'
-    classpath = sourceSets.main.runtimeClasspath
-}
-
-task startWorker(type: JavaExec) {
-    main = 'helloworldapp.HelloWorldWorker'
-    classpath = sourceSets.main.runtimeClasspath
-}
-// @@@SNIPEND
